@@ -41,18 +41,18 @@
 
 2. add script to `index.html`
 
-   ```
-       <!-- global is undefined  -->
-       <script>
-         var global = window;
-       </script>
-       <script type="module">
-         import process from 'process';
-         import { Buffer } from 'buffer';
+   ```html
+   <!-- global is undefined  -->
+   <script>
+     var global = window;
+   </script>
+   <script type="module">
+     import process from 'process';
+     import { Buffer } from 'buffer';
 
-         window.Buffer = Buffer;
-         window.process = process;
-       </script>
+     window.Buffer = Buffer;
+     window.process = process;
+   </script>
    ```
 
 3. add alias to pack config file: `vite.config.ts`
