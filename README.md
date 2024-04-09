@@ -43,7 +43,7 @@
 
    ```html
    <!-- global is undefined  -->
-   <script>
+   <script> 
      var global = window;
    </script>
    <script type="module">

@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import {
   createAccount,
   importAccountByMnemonic,
   importAccountByPrivateKey,
+  web3,
 } from './utils';
+import { Decrypt, Encrypt } from './utils/secret';
+
+/**
+ * 0xbd7c3591019c395933beb93bff93d2e2f4e1e2d6
+ * 0x9884bae838f4763775d56907b64d8ea93c013a1bb43e1fb847026b4db3d0a438
+ * grunt fly moral charge soup car remember merit calm ostrich vague system
+ */
+// "couch jar exit deputy snack state humble car amazing over diesel federal"
 
 const BUTTON_STYLE = {
   backgroundColor: 'rgba(0,0,0,0.8)',
@@ -36,44 +45,60 @@ const App = () => {
   const [mnemonicAddress, setMnemonicAddress] = useState<string>();
   const [privateKeyAddress, setPrivateKeyAddress] = useState<string>();
   const [mnemonicPass, setMnemonicPass] = useState<string>();
+
+  useEffect(() => {
+    const mn = localStorage.getItem('mn');
+    const pk = localStorage.getItem('pk');
+    if (mn && pk && password) {
+      setObj({
+        privateKey: Decrypt(pk, password),
+        mnemonic: Decrypt(mn, password),
+        address: web3.eth.accounts.privateKeyToAccount(Decrypt(pk, password))
+          .address,
+      });
+    }
+  }, [password]);
+  console.log(obj);
   return (
     <div style={{ width: '500px' }}>
       <div
-        style={{ ...WRAPPER_STYLE, backgroundColor: !!obj ? 'gray' : 'white' }}
+      // style={{ ...WRAPPER_STYLE, backgroundColor: !!obj ? 'gray' : 'white' }}
       >
         <h3>create account</h3>
         <input
           value={password}
-          disabled={!!obj}
+          // disabled={!!obj}
           onChange={(e) => setPassword(e.target.value)}
           style={INPUT_STYLE}
           placeholder='please input password'
         />
         <button
           style={{ ...BUTTON_STYLE, marginLeft: 10 }}
-          disabled={!!obj}
+          // disabled={!!obj}
           onClick={async () => {
-            if (obj || !password) return;
+            if (!password) return;
             const { address, privateKey, mnemonic } = await createAccount(
               password
             );
-            setObj({ address, privateKey, mnemonic });
             console.log(
-              '🚀 ~ file: App.tsx:57 ~ onClick={ ~ { address, privateKey, mnemonic }:',
+              '🚀 ~ file: App.tsx:76 ~ onClick={ ~ mnemonic:',
               address,
-              privateKey,
               mnemonic
             );
-            // const res = importAccountByMnemonic(mnemonic)?.address;
-            // console.log(res?.toLowerCase() === address.toLowerCase());
+
+            localStorage.setItem('mn', Encrypt(mnemonic));
+            localStorage.setItem('pk', Encrypt(privateKey));
           }}
         >
           create
         </button>
-        {!!obj && <p>created address is: {obj.address}</p>}
+        {<p>created address is: {obj?.address}</p>}
       </div>
 
-      <div style={WRAPPER_STYLE} hidden={!obj}>
+      {/* 查看助记词 */}
+      {/* 导出私钥 */}
+
+      <div style={WRAPPER_STYLE}>
         <h3>import account by mnemonic</h3>
         <div>
           <input

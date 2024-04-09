@@ -42,7 +42,7 @@ const createAccount = async (password: string) => {
   const mnemonic = generateMnemonic();
 
   // 2. mnemonic to seed
-  const seed = mnemonicToSeedSync(mnemonic, password);
+  const seed = mnemonicToSeedSync(mnemonic);
 
   // 3. seed to HD Wallet
   const hdWallet = hdkey.fromMasterSeed(seed);
@@ -168,6 +168,7 @@ export {
   importAccountByPrivateKey,
   sendTransaction,
   getContractInstance,
+  web3,
 };
 const main = async () => {
   const contractInstance = getContractInstance(WETH_ABI, WETH_ADDRESS);
